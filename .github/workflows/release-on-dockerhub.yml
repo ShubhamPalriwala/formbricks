@@ -27,7 +27,7 @@ jobs:
         run: |
           TAG=${{ github.ref }}
           TAG=${TAG#refs/tags/v}
-          echo "::set-output name=RELEASE_TAG::$TAG"
+          echo "RELEASE_TAG=$TAG" >> $GITHUB_ENV
         
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
@@ -36,5 +36,5 @@ jobs:
           file: ./apps/web/Dockerfile
           push: true
           tags: |
-            ${{ secrets.DOCKER_USERNAME }}/formbricks:${{ steps.extract_release_tag.outputs.RELEASE_TAG }}
+            ${{ secrets.DOCKER_USERNAME }}/formbricks:${{ env.RELEASE_TAG }}
             ${{ secrets.DOCKER_USERNAME }}/formbricks:latest
