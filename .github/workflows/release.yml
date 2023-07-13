@@ -44,7 +44,7 @@ jobs:
           context: .
           file: ./apps/web/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/formbricks:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/formbricks:latest
 
       - name: Create Release Pull Request or Publish to npm
         id: changesets
