@@ -34,7 +34,7 @@ jobs:
         id: extract_release_tag
         run: |
           TAG=${{ github.ref }}
-          TAG=${TAG#v}
+          TAG=${TAG#refs/tags/v}
           echo "::set-output name=RELEASE_TAG::$TAG"
         
       - name: Build and push Docker image
