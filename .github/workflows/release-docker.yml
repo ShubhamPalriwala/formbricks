@@ -22,14 +22,14 @@ jobs:
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
+          username: laalshaitaan
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v2
         with:
           registry: ghcr.io
-          username: ${{ github.repository_owner }}
+          username: shubhampalriwala
           password: ${{ secrets.GH_TOKEN }}
 
       - name: Set up Docker Buildx
@@ -49,7 +49,7 @@ jobs:
           file: ./apps/web/Dockerfile
           push: false
           tags: |
-            ${{ secrets.DOCKER_USERNAME }}/formbricks:${{ env.RELEASE_TAG }}
+            laalshaitaan/formbricks:${{ env.RELEASE_TAG }}
             ghcr.io/shubhampalriwala/formbricks:${{ env.RELEASE_TAG }}
           build-args: |
             NEXTAUTH_SECRET=${{ env.NEXTAUTH_SECRET }}
@@ -58,7 +58,7 @@ jobs:
 
       - name: Push to Docker Hub
         run: |
-          docker push ${{ secrets.DOCKER_USERNAME }}/formbricks:${{ env.RELEASE_TAG }}
+          docker push laalshaitaan/formbricks:${{ env.RELEASE_TAG }}
 
       - name: Push to GHCR
         run: |
