@@ -13,8 +13,8 @@ jobs:
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
       DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/formbricks?schema=public"
-      NEXTAUTH_SECRET: ${{ env.NEXTAUTH_SECRET }}
-      ENCRYPTION_KEY: ${{ env.ENCRYPTION_KEY }}
+      NEXTAUTH_SECRET: "8402fecffe4f0442e8d1c9882193588d7d717a0f106cc1592b0d0f0991261540"
+      ENCRYPTION_KEY: "8402fecffe4f0442e8d1c9882193588d7d717a0f106cc1592b0d0f0991261540"
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v2
