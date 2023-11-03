@@ -49,8 +49,12 @@ jobs:
           file: ./apps/web/Dockerfile
           push: false
           tags: |
-            laalshaitaan/formbricks:${{ env.RELEASE_TAG }}
+            ${{ secrets.DOCKER_USERNAME }}/formbricks:${{ env.RELEASE_TAG }}
+            ${{ secrets.DOCKER_USERNAME }}/formbricks:latest
+
             ghcr.io/shubhampalriwala/formbricks:${{ env.RELEASE_TAG }}
+            ghcr.io/shubhampalriwala/formbricks:latest
+
           build-args: |
             NEXTAUTH_SECRET=${{ env.NEXTAUTH_SECRET }}
             DATABASE_URL=${{ env.DATABASE_URL }}
