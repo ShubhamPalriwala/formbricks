@@ -48,7 +48,7 @@ jobs:
           push: false
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/formbricks:${{ env.RELEASE_TAG }}
-            ghcr.io/${{ github.repository_owner }}/formbricks:${{ env.RELEASE_TAG }}
+            ghcr.io/shubhampalriwala/formbricks:${{ env.RELEASE_TAG }}
           build-args: |
             NEXTAUTH_SECRET=${{ env.NEXTAUTH_SECRET }}
             DATABASE_URL=${{ env.DATABASE_URL }}
@@ -60,4 +60,4 @@ jobs:
 
       - name: Push to GHCR
         run: |
-          docker push ghcr.io/${{ github.repository_owner }}/formbricks:${{ env.RELEASE_TAG }}
+          docker push ghcr.io/shubhampalriwala/formbricks:${{ env.RELEASE_TAG }}
