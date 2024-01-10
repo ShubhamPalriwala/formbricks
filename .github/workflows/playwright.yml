@@ -1,5 +1,8 @@
 name: E2E Tests
 on:
+  push:
+    branches:
+      - shubham/ci-caching-npm
   workflow_call:
 jobs:
   build:
