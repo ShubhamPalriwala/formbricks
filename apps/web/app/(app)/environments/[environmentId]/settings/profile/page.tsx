@@ -16,8 +16,6 @@ export default async function ProfileSettingsPage({ params }: { params: { enviro
   const session = await getServerSession(authOptions);
   const user = session && session.user ? await getUser(session.user.id) : null;
 
-  console.log("helo");
-
   return (
     <>
       {user && (

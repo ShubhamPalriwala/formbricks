@@ -46,8 +46,21 @@ jobs:
       - name: Build Formbricks Image & Run
         run: |
           mkdir -p /tmp/docker-cache
-          docker-compose build --cache-from=formbricks_formbricks:latest
           IMAGE_CACHE_PATH="/tmp/docker-cache/image-${{ steps.context-hash.outputs.hash }}.tar"
+          IMAGE_LOADED=false
+
+          if [ -f "$IMAGE_CACHE_PATH" ]; then
+            docker load < "$IMAGE_CACHE_PATH" && IMAGE_LOADED=true
+          fi
+
+          if [ "$IMAGE_LOADED" = false ]; then
+            echo "Cached image not found or outdated, building image..."
+            docker-compose build
+          else
+            echo "Using cached image"
+            docker-compose build --cache-from=formbricks_formbricks:latest
+          fi
+
           docker save formbricks_formbricks:latest > "$IMAGE_CACHE_PATH"
           docker-compose up -d
 
