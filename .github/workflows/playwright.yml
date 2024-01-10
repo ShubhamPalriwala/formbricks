@@ -14,17 +14,38 @@ jobs:
         with:
           node-version: 20
 
+      - name: Generate build context hash
+        id: context-hash
+        run: echo "::set-output name=hash::$(tar -cf - . | sha256sum | cut -d' ' -f1)"
+
+      - name: Cache Docker layers
+        uses: actions/cache@v3
+        with:
+          path: /tmp/docker-cache
+          key: ${{ runner.os }}-docker-${{ steps.context-hash.outputs.hash }}
+          restore-keys: |
+            ${{ runner.os }}-docker-
+
+      - name: Load cached Docker image
+        run: |
+          if [ -f /tmp/docker-cache/image.tar ]; then
+            docker load < /tmp/docker-cache/image.tar
+          fi
+
       - name: Install Docker Compose
         run: sudo apt-get update && sudo apt-get install -y docker-compose
 
       - name: Install dependencies
         run: npm install -g pnpm && pnpm install
 
-      - name: Build Formricks JS package
+      - name: Build Formbricks JS package
         run: pnpm build --filter=js
 
       - name: Build Formbricks Image & Run
-        run: docker-compose up -d
+        run: |
+          docker-compose build
+          docker save formbricks:latest > /tmp/docker-cache/image.tar
+          docker-compose up -d
 
       - name: Install Playwright Browsers
         run: pnpm exec playwright install --with-deps
