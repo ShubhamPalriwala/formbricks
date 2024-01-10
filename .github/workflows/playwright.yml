@@ -47,9 +47,11 @@ jobs:
       - name: Build Formbricks Image & Run
         run: |
           mkdir -p /tmp/docker-cache
-          docker-compose build
-          docker images  # List all Docker images for debugging
-          docker save formbricks_formbricks:latest > /tmp/docker-cache/image.tar  # Adjust the image name/tag accordingly
+          if [ -f /tmp/docker-cache/image.tar ]; then
+            docker load < /tmp/docker-cache/image.tar
+          fi
+          docker-compose build --cache-from=formbricks_formbricks:latest
+          docker save formbricks_formbricks:latest > /tmp/docker-cache/image.tar
           docker-compose up -d
 
       - name: Install Playwright Browsers
