@@ -19,20 +19,19 @@ jobs:
 
       - name: Generate build context hash
         id: context-hash
-        run: echo "::set-output name=hash::$(tar -cf - . | sha256sum | cut -d' ' -f1)"
+        run: echo "::set-output name=hash::$(tar -cf - ./apps/ ./packages/ | sha256sum | cut -d' ' -f1)"
 
       - name: Cache Docker layers
         uses: actions/cache@v3
         with:
           path: /tmp/docker-cache
           key: ${{ runner.os }}-docker-${{ steps.context-hash.outputs.hash }}
-          restore-keys: |
-            ${{ runner.os }}-docker-
 
       - name: Load cached Docker image
         run: |
-          if [ -f /tmp/docker-cache/image.tar ]; then
-            docker load < /tmp/docker-cache/image.tar
+          IMAGE_CACHE_PATH="/tmp/docker-cache/image-${{ steps.context-hash.outputs.hash }}.tar"
+          if [ -f "$IMAGE_CACHE_PATH" ]; then
+            docker load < "$IMAGE_CACHE_PATH"
           fi
 
       - name: Install Docker Compose
@@ -47,11 +46,9 @@ jobs:
       - name: Build Formbricks Image & Run
         run: |
           mkdir -p /tmp/docker-cache
-          if [ -f /tmp/docker-cache/image.tar ]; then
-            docker load < /tmp/docker-cache/image.tar
-          fi
           docker-compose build --cache-from=formbricks_formbricks:latest
-          docker save formbricks_formbricks:latest > /tmp/docker-cache/image.tar
+          IMAGE_CACHE_PATH="/tmp/docker-cache/image-${{ steps.context-hash.outputs.hash }}.tar"
+          docker save formbricks_formbricks:latest > "$IMAGE_CACHE_PATH"
           docker-compose up -d
 
       - name: Install Playwright Browsers
