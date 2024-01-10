@@ -46,6 +46,7 @@ jobs:
 
       - name: Build Formbricks Image & Run
         run: |
+          mkdir -p /tmp/docker-cache  # Ensure the directory exists
           docker-compose build
           docker save formbricks:latest > /tmp/docker-cache/image.tar
           docker-compose up -d
