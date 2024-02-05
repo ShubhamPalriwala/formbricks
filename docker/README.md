@@ -27,3 +27,7 @@ The script will prompt you for the following information:
 3. **Domain Name**: Enter the domain name that Traefik will use to create the SSL certificate and forward requests to Formbricks.
 
 That's it! After running the command and providing the required information, visit the domain name you entered, and you should see the Formbricks home wizard!
+
+
+
+

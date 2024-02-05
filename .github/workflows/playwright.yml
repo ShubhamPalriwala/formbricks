@@ -1,5 +1,8 @@
 name: E2E Tests
 on:
+  push:
+    branches:
+      - shubham/ci-caching-npm
   workflow_call:
 jobs:
   build:
@@ -14,17 +17,52 @@ jobs:
         with:
           node-version: 20
 
+      - name: Generate build context hash
+        id: context-hash
+        run: echo "::set-output name=hash::$(tar -cf - ./apps/ ./packages/ | sha256sum | cut -d' ' -f1)"
+
+      - name: Cache Docker layers
+        uses: actions/cache@v3
+        with:
+          path: /tmp/docker-cache
+          key: ${{ runner.os }}-docker-${{ steps.context-hash.outputs.hash }}
+
+      - name: Load cached Docker image
+        run: |
+          IMAGE_CACHE_PATH="/tmp/docker-cache/image-${{ steps.context-hash.outputs.hash }}.tar"
+          if [ -f "$IMAGE_CACHE_PATH" ]; then
+            docker load < "$IMAGE_CACHE_PATH"
+          fi
+
       - name: Install Docker Compose
         run: sudo apt-get update && sudo apt-get install -y docker-compose
 
       - name: Install dependencies
         run: npm install -g pnpm && pnpm install
 
-      - name: Build Formricks JS package
+      - name: Build Formbricks JS package
         run: pnpm build --filter=js
 
       - name: Build Formbricks Image & Run
-        run: docker-compose up -d
+        run: |
+          mkdir -p /tmp/docker-cache
+          IMAGE_CACHE_PATH="/tmp/docker-cache/image-${{ steps.context-hash.outputs.hash }}.tar"
+          IMAGE_LOADED=false
+
+          if [ -f "$IMAGE_CACHE_PATH" ]; then
+            docker load < "$IMAGE_CACHE_PATH" && IMAGE_LOADED=true
+          fi
+
+          if [ "$IMAGE_LOADED" = false ]; then
+            echo "Cached image not found or outdated, building image..."
+            docker-compose build
+          else
+            echo "Using cached image"
+            docker-compose build --cache-from=formbricks_formbricks:latest
+          fi
+
+          docker save formbricks_formbricks:latest > "$IMAGE_CACHE_PATH"
+          docker-compose up -d
 
       - name: Install Playwright Browsers
         run: pnpm exec playwright install --with-deps
