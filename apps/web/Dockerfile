@@ -26,7 +26,7 @@ RUN apk update && apk add --no-cache g++ cmake make gcc python3 openssl-dev jq
 # Install Supercronic (cron for containers without super user privileges)
 RUN apk add --no-cache curl \
     && curl -fsSLo /tmp/supercronic \
-    "https://github.com/aptible/supercronic/releases/download/v0.2.27/supercronic-linux-amd64" \
+    `https://github.com/aptible/supercronic/releases/download/v0.2.27/supercronic-linux-${TARGETARCH}` \
     && chmod +x /tmp/supercronic
 
 # Set hardcoded environment variables
