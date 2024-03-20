@@ -87,6 +87,7 @@ env:
     - S3_BUCKET_NAME
     - RATE_LIMITING_DISABLED
     - REDIS_CLIENT_URL
+    - REDIS_PASSWORD
 
 # Use a different ssh user than root
 ssh:
@@ -160,6 +161,10 @@ accessories:
     port: 6379
     directories:
       - data:/data
+    cmd: "/bin/sh -c 'redis-server --requirepass $REDIS_PASSWORD'"
+    env:
+      secret:
+        - REDIS_PASSWORD
 
 # Configure custom arguments for Traefik
 # traefik:
