@@ -14,6 +14,8 @@ servers:
       traefik.http.routers.formbricks-kamal.rule: Host(`kamal.shubham.formbricks.com`)
       traefik.http.routers.formbricks-kamal.tls.certresolver: letsencrypt
 
+retain_containers: 3
+
 # Credentials for your image host.
 registry:
   # Specify the registry server, if you're not using Docker Hub
@@ -115,8 +117,6 @@ builder:
 #   remote:
 #     arch: amd64
 #     host: ssh://app@192.168.0.1
-
-retain_containers: 3
 
 traefik:
   options:
